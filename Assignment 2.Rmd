@@ -1,0 +1,122 @@
+---
+title: "Assignment 2"
+author: "Hyungue Lim"
+date: "9/16/2019"
+output: github_document
+---
+
+
+# 1, 2
+```{r, echo = FALSE}
+library(readxl)
+
+
+
+c2015 <- read_excel("~/MATH 421/c2015.xlsx")
+```
+
+# 3
+```{r}
+class(c2015)
+```
+
+# 4
+```{r}
+dim(c2015)
+set.seed(2019)
+
+c2015_sample <- c2015[sample(nrow(c2015),1000),]
+
+```
+
+# 5
+```{r}
+summary(c2015_sample)
+c2015_sample <- c2015_sample[,-16]
+```
+
+# 6
+```{r}
+is.na(c2015_sample)
+'summary function shows NAs in data'
+summary(c2015_sample)
+```
+
+# 7
+```{r}
+
+colSums(c2015_sample == "Unknown")
+
+```
+
+# 8
+```{r}
+a <- c2015_sample$SEX == "Unknown"
+c2015_sample$SEX[a] <- "Female"
+```
+
+# 9
+```{r}
+c2015_sample$AGE[c2015_sample$AGE == "Less than 1"] <- "0"
+c2015_sample$AGE <- as.numeric(c2015_sample$AGE)
+c2015_sample$AGE[is.na(c2015_sample$AGE)] <- mean(c2015_sample$AGE, na.rm = TRUE)
+```
+
+# 10
+```{r}
+library("stringr")
+c2015_sample$TRAV_SP <- str_replace(c2015_sample$TRAV_SP, " MPH", "")
+c2015_sample$TRAV_SP <- str_replace(c2015_sample$TRAV_SP, "Stopped", "0")
+
+c2015_sample$TRAV_SP <- as.numeric(c2015_sample$TRAV_SP)
+
+mean(c2015_sample$TRAV_SP, na.rm=TRUE)
+
+c2015_sample1 = c2015_sample[!is.na(c2015_sample$TRAV_SP),]
+```
+
+# 11
+```{r}
+mean(c2015_sample1$TRAV_SP[c2015_sample1$INJ_SEV == "No Apparent Injury (O)"])
+
+mean(c2015_sample1$TRAV_SP[c2015_sample1$INJ_SEV != "No Apparent Injury (O)"])
+
+#People with no apparent injury were driving slower on average than people with some observed injuries.
+
+```
+
+# 12
+```{r}
+c2015_sample2 <- subset(c2015_sample1, SEAT_POS == "Front Seat, Left Side")
+
+mean(c2015_sample2$TRAV_SP[c2015_sample2$SEX == "Male"])
+
+mean(c2015_sample2$TRAV_SP[c2015_sample2$SEX == "Female"])
+
+#Men were driving faster than women on average
+```
+
+# 13
+```{r}
+aggregate(c2015_sample2$TRAV_SP, list(c2015_sample2$DRINKING), mean)[c(1,4),]
+
+#Drivers who consumed alcohol were driving faster than those who did not.
+```
+
+# 14
+```{r}
+#My hypothesis is that drivers under the age of 25 drive more aggresively than those who are 25 and above
+
+mean(c2015_sample2$TRAV_SP[c2015_sample2$AGE < 25])
+
+mean(c2015_sample2$TRAV_SP[c2015_sample2$AGE >= 25])
+
+#The average driving speed for those under 25 is higher than those who are 25 and above. This might indicate that drivers younger than 25 drive more aggressively than drivers who are 25 or older
+```
+
+# 15
+```{r}
+#Data confirmed my hypothesis in #14
+```
+
+
